@@ -2,7 +2,8 @@
 // Copyright (C) 2023 dgotshalk <dgotshalk@Dissonance>
 // Distributed under terms of the MIT license.
 
-use actix_web::{App, HttpServer};
+use actix_web::{web, App, HttpServer};
+use handlebars::Handlebars;
 
 mod routes;
 use crate::routes::{homepage, index, iphistory};
@@ -16,6 +17,11 @@ mod tests {
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
+    let mut handlebars = Handlebars::new();
+    handlebars
+        .register_templates_directory(".html", "./static/templates")
+        .unwrap();
+    let handlebars_ref = web::Data::new(handlebars);
     HttpServer::new(|| {
         App::new()
             .service(homepage)
