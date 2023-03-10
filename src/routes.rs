@@ -13,8 +13,8 @@ use std::path::PathBuf;
 
 #[get("/")]
 pub async fn homepage(req: HttpRequest, hb: web::Data<Handlebars<'_>>) -> impl Responder {
+    let req_remote_ip = String::from(req.connection_info().realip_remote_addr().unwrap_or("None"));
     let req_headers = req.headers();
-    let req_remote_ip = get_header_as_string(req_headers, header::X_FORWARDED_FOR);
     let req_agent = get_header_as_string(req_headers, header::USER_AGENT);
 
     let data = json!({
