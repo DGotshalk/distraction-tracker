@@ -22,8 +22,9 @@ async fn main() -> std::io::Result<()> {
         .register_templates_directory(".html", "./static/templates")
         .unwrap();
     let handlebars_ref = web::Data::new(handlebars);
-    HttpServer::new(|| {
+    HttpServer::new(move || {
         App::new()
+            .app_data(handlebars_ref.clone())
             .service(homepage)
             .service(iphistory)
             .service(index)
