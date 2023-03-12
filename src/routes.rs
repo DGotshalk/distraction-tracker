@@ -4,12 +4,10 @@
 // Distributed under terms of the MIT license.
 //
 
-use actix_files::NamedFile;
 use actix_http::header;
-use actix_web::{get, web, HttpRequest, HttpResponse, Responder, Result};
+use actix_web::{get, web, HttpRequest, HttpResponse, Responder};
 use handlebars::Handlebars;
 use serde_json::json;
-use std::path::PathBuf;
 
 #[get("/")]
 pub async fn homepage(req: HttpRequest, hb: web::Data<Handlebars<'_>>) -> impl Responder {
@@ -33,12 +31,6 @@ pub async fn iphistory(req: HttpRequest) -> impl Responder {
     let val = String::from(req.connection_info().realip_remote_addr().unwrap_or("None"));
     // this is where I would pass this to a sql query handler
     HttpResponse::Ok().body(val)
-}
-
-#[get("/index")]
-pub async fn index(_req: HttpRequest) -> Result<NamedFile> {
-    let path: PathBuf = "./static/index.html".parse().unwrap();
-    Ok(NamedFile::open_async(path).await?)
 }
 
 fn get_header_as_string(
