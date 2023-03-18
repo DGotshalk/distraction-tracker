@@ -2,9 +2,12 @@
 // Copyright (C) 2023 dgotshalk <dgotshalk@Dissonance>
 // Distributed under terms of the MIT license.
 
-use actix_files::Files;
-use actix_web::{web, App, HttpServer};
-use handlebars::Handlebars;
+use axum::{
+    http::StatusCode,
+    response::IntoResponse,
+    routing::{get, post},
+    Json, Router,
+};
 mod routes;
 use routes::{homepage, iphistory};
 
@@ -17,21 +20,12 @@ mod tests {
 
 //need to add the assets folder and allow for sub directories ./assets
 //may literally need the actix files
-#[actix_web::main]
-async fn main() -> std::io::Result<()> {
-    let mut handlebars = Handlebars::new();
-    handlebars
-        .register_templates_directory(".html", "./static/templates")
+#[tokio::main]
+async fn main() {
+    let app = Router::new();
+    let addr = std::net::SocketAddr::from(([127, 0, 0, 1], 8080));
+    axum::Server::bind(&addr)
+        .serve(app.into_make_service())
+        .await
         .unwrap();
-    let handlebars_ref = web::Data::new(handlebars);
-    HttpServer::new(move || {
-        App::new()
-            .app_data(handlebars_ref.clone())
-            .service(Files::new("/static/assets", "./static/assets"))
-            .service(homepage)
-            .service(iphistory)
-    })
-    .bind(("127.0.0.1", 8080))?
-    .run()
-    .await
 }
