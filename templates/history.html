@@ -27,9 +27,9 @@
 		</b>
 	</p>
 	<ul>
-		{{ #each dates }}
+		{% for this in dates %}
 		<li> {{ this.date }} : {{ this.count }}
-		{{ /each }}
+		{% endfor %}
 	</ul>
 	</body>
 </html>
