@@ -23,7 +23,7 @@ async fn main() {
         .route("/history", get(iphistory))
         .nest_service("/images", ServeDir::new("./static/assets/images"))
         .layer(SecureClientIpSource::ConnectInfo.into_extension());
-    let addr = std::net::SocketAddr::from(([127, 0, 0, 1], 8080));
+    let addr = std::net::SocketAddr::from(([0, 0, 0, 0], 8080));
     axum::Server::bind(&addr)
         .serve(app.into_make_service_with_connect_info::<std::net::SocketAddr>())
         .await
