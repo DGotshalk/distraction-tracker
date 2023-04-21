@@ -15,19 +15,13 @@ mod tests {
     fn it_works() {}
 }
 
-//need to add the assets folder and allow for sub directories ./assets
-//may literally need the actix files
 #[tokio::main]
 async fn main() {
     let app = Router::new()
         .route("/", get(homepage))
         .route("/history", get(iphistory))
-        .nest_service(
-            "/static/assets/images",
-            ServeDir::new("static/assets/images"),
-        );
+        .nest_service("/images", ServeDir::new("./static/assets/images"));
     let addr = std::net::SocketAddr::from(([127, 0, 0, 1], 8080));
-
     axum::Server::bind(&addr)
         .serve(app.into_make_service_with_connect_info::<std::net::SocketAddr>())
         .await

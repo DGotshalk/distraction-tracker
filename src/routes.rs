@@ -17,17 +17,21 @@ struct DateCount {
     count: i32,
 }
 
-pub async fn homepage(ConnectInfo(addr): ConnectInfo<std::net::SocketAddr>) -> impl IntoResponse {
+pub async fn homepage(
+    ConnectInfo(addr): ConnectInfo<std::net::SocketAddr>,
+    TypedHeader(user_agent): TypedHeader<UserAgent>,
+) -> impl IntoResponse {
     // this is where I would pass this to a sql query handler
     // NEED:
     // date (we can generate)
     // ip
     // agent
     // generate counter from these counts and put them here :)
+
     let template = IndexTemplate {
         message: String::from("Dont' be distracted"),
         ip: String::from(addr.ip().to_string()),
-        agent: String::from("None"),
+        agent: String::from(user_agent.to_string()),
     };
     match template.render() {
         Ok(html) => Html(html).into_response(),
@@ -39,7 +43,10 @@ pub async fn homepage(ConnectInfo(addr): ConnectInfo<std::net::SocketAddr>) -> i
     }
 }
 
-pub async fn iphistory(ConnectInfo(addr): ConnectInfo<std::net::SocketAddr>) -> impl IntoResponse {
+pub async fn iphistory(
+    ConnectInfo(addr): ConnectInfo<std::net::SocketAddr>,
+    TypedHeader(user_agent): TypedHeader<UserAgent>,
+) -> impl IntoResponse {
     //Now I need to get the string back from the request
     // this is where I would pass this to a sql query handler
     // NEED (would make a list of this data and put them in the dates env ):
@@ -77,7 +84,7 @@ pub async fn iphistory(ConnectInfo(addr): ConnectInfo<std::net::SocketAddr>) -> 
     let template = HistoryTemplate {
         message: String::from("Dont' be distracted"),
         ip: String::from(addr.ip().to_string()),
-        agent: String::from("None"),
+        agent: String::from(user_agent.to_string()),
         dates: &data,
     };
 
