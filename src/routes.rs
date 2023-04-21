@@ -5,12 +5,12 @@
 
 use askama::Template;
 use axum::{
-    extract::connect_info::{ConnectInfo, Connected},
     headers::UserAgent,
     http::StatusCode,
     response::{Html, IntoResponse},
     TypedHeader,
 };
+use axum_client_ip::{LeftmostXForwardedFor, SecureClientIp};
 
 struct DateCount {
     date: String,
@@ -18,19 +18,13 @@ struct DateCount {
 }
 
 pub async fn homepage(
-    ConnectInfo(addr): ConnectInfo<std::net::SocketAddr>,
+    LeftmostXForwardedFor(header_ip): LeftmostXForwardedFor,
     TypedHeader(user_agent): TypedHeader<UserAgent>,
 ) -> impl IntoResponse {
-    // this is where I would pass this to a sql query handler
-    // NEED:
-    // date (we can generate)
-    // ip
-    // agent
-    // generate counter from these counts and put them here :)
-
+    let client_ip: String = check_if_ip(header_ip);
     let template = IndexTemplate {
         message: String::from("Dont' be distracted"),
-        ip: String::from(addr.ip().to_string()),
+        ip: String::from(client_ip),
         agent: String::from(user_agent.to_string()),
     };
     match template.render() {
@@ -44,17 +38,9 @@ pub async fn homepage(
 }
 
 pub async fn iphistory(
-    ConnectInfo(addr): ConnectInfo<std::net::SocketAddr>,
+    LeftmostXForwardedFor(header_ip): LeftmostXForwardedFor,
     TypedHeader(user_agent): TypedHeader<UserAgent>,
 ) -> impl IntoResponse {
-    //Now I need to get the string back from the request
-    // this is where I would pass this to a sql query handler
-    // NEED (would make a list of this data and put them in the dates env ):
-    // date
-    // ip
-    // agent
-    // generate counter from these counts and put them here
-
     let data: Vec<DateCount> = vec![
         DateCount {
             date: String::from("This"),
@@ -81,9 +67,10 @@ pub async fn iphistory(
             count: 5,
         },
     ];
+    let client_ip: String = check_if_ip(header_ip);
     let template = HistoryTemplate {
         message: String::from("Dont' be distracted"),
-        ip: String::from(addr.ip().to_string()),
+        ip: String::from(client_ip.to_string()),
         agent: String::from(user_agent.to_string()),
         dates: &data,
     };
@@ -95,6 +82,14 @@ pub async fn iphistory(
             format!("Failed to render template. Error {}", err),
         )
             .into_response(),
+    }
+}
+
+fn check_if_ip(header_ip: std::net::IpAddr) -> String {
+    if header_ip.is_ipv4() || header_ip.is_ipv6() {
+        header_ip.to_string()
+    } else {
+        String::from("None")
     }
 }
 

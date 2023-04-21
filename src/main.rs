@@ -3,6 +3,7 @@
 // Distributed under terms of the MIT license.
 
 use axum::{routing::get, Router};
+use axum_client_ip::SecureClientIpSource;
 use tower_http::services::ServeDir;
 
 mod routes;
@@ -20,7 +21,8 @@ async fn main() {
     let app = Router::new()
         .route("/", get(homepage))
         .route("/history", get(iphistory))
-        .nest_service("/images", ServeDir::new("./static/assets/images"));
+        .nest_service("/images", ServeDir::new("./static/assets/images"))
+        .layer(SecureClientIpSource::ConnectInfo.into_extension());
     let addr = std::net::SocketAddr::from(([127, 0, 0, 1], 8080));
     axum::Server::bind(&addr)
         .serve(app.into_make_service_with_connect_info::<std::net::SocketAddr>())
