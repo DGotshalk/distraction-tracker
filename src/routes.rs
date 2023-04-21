@@ -5,8 +5,11 @@
 
 use askama::Template;
 use axum::{
+    extract::connect_info::{ConnectInfo, Connected},
+    headers::UserAgent,
     http::StatusCode,
     response::{Html, IntoResponse},
+    TypedHeader,
 };
 
 struct DateCount {
@@ -14,20 +17,18 @@ struct DateCount {
     count: i32,
 }
 
-pub async fn homepage() -> impl IntoResponse {
+pub async fn homepage(ConnectInfo(addr): ConnectInfo<std::net::SocketAddr>) -> impl IntoResponse {
     // this is where I would pass this to a sql query handler
     // NEED:
     // date (we can generate)
     // ip
     // agent
     // generate counter from these counts and put them here :)
-
     let template = IndexTemplate {
         message: String::from("Dont' be distracted"),
-        ip: String::from("127.0.0.1"),
+        ip: String::from(addr.ip().to_string()),
         agent: String::from("None"),
     };
-
     match template.render() {
         Ok(html) => Html(html).into_response(),
         Err(err) => (
@@ -38,7 +39,7 @@ pub async fn homepage() -> impl IntoResponse {
     }
 }
 
-pub async fn iphistory() -> impl IntoResponse {
+pub async fn iphistory(ConnectInfo(addr): ConnectInfo<std::net::SocketAddr>) -> impl IntoResponse {
     //Now I need to get the string back from the request
     // this is where I would pass this to a sql query handler
     // NEED (would make a list of this data and put them in the dates env ):
@@ -49,33 +50,33 @@ pub async fn iphistory() -> impl IntoResponse {
 
     let data: Vec<DateCount> = vec![
         DateCount {
-            date: String::from("10-03-2023"),
+            date: String::from("This"),
             count: 1,
         },
         DateCount {
-            date: String::from("11-03-2023"),
+            date: String::from("Is"),
             count: 0,
         },
         DateCount {
-            date: String::from("12-03-2023"),
+            date: String::from("Still"),
             count: 2,
         },
         DateCount {
-            date: String::from("13-03-2023"),
+            date: String::from("In"),
             count: 4,
         },
         DateCount {
-            date: String::from("14-03-2023"),
+            date: String::from("Beta"),
             count: 3,
         },
         DateCount {
-            date: String::from("15-03-2023"),
+            date: String::from("Testing"),
             count: 5,
         },
     ];
     let template = HistoryTemplate {
         message: String::from("Dont' be distracted"),
-        ip: String::from("127.0.0.1"),
+        ip: String::from(addr.ip().to_string()),
         agent: String::from("None"),
         dates: &data,
     };
