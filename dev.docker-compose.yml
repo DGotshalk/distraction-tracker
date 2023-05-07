@@ -1,0 +1,16 @@
+services:
+  mysql-dev:
+    image: mysql
+    ports:
+      - "3306:3306"
+    volumes:
+      - "mysql_data_dev:/var/lib/mysql"
+    environment:
+      - "ALLOW_EMPTY_PASSWORD=yes"
+      - MYSQL_DATABASE=dt_dev
+      - MYSQL_USERNAME=dt-dev
+      - MYSQL_PASSWORD=dt_dev_pass
+
+volumes:
+  mysql_data_dev:
+    driver: local

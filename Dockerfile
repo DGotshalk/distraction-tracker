@@ -14,7 +14,7 @@ COPY . .
 RUN cargo build --release --bin distraction-tracker
 
 # We do not need the Rust toolchain to run the binary!
-FROM debian:buster-slim AS runtime
+FROM debian:bullseye-slim AS runtime
 WORKDIR app
 COPY --from=builder /app/target/release/distraction-tracker /app/app-bin
 COPY --from=builder /app/static/ /app/static
