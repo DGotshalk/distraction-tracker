@@ -1,5 +1,3 @@
-updated README for the `distraction-tracker` repository on the `docker-sql` branch, assuming that it uses MySQL and listens on port 8080:
-
 # Distraction Tracker
 
 Distraction Tracker is a web application that helps you keep track of your daily distractions. It allows you to log distractions as they occur throughout the day, and provides analytics and insights to help you understand your habits and identify areas for improvement.
