@@ -22,6 +22,7 @@ mod tests {
 
 #[tokio::main]
 async fn main() {
+    dotenv::dotenv().ok();
     let pool =
         connect_to_db(&env::var("DATABASE_URL").expect("Expected DATABASE_URL in environment"))
             .await;
