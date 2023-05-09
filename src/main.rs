@@ -9,6 +9,7 @@ use axum_client_ip::SecureClientIpSource;
 use std::env;
 use tower_http::services::ServeDir;
 
+mod commands;
 mod db;
 mod models;
 mod routes;
