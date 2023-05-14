@@ -6,19 +6,19 @@
 
 //Still debatable if I will need this, I have plans for serializing as json, but don't necessarily
 //need to? Will have to check for efficiency in doing so :)
-use serde::{Deserialize, Serialize};
+use chrono::{DateTime, Utc};
 
-#[derive(sqlx::FromRow, Serialize, Deserialize)]
+#[derive(sqlx::FromRow)]
 pub struct Users {
     pub id: u64,
     pub ip_address: String,
     pub user_agent: String,
 }
 
-#[derive(sqlx::FromRow, Serialize, Deserialize)]
+#[derive(sqlx::FromRow)]
 pub struct UserConnections {
     pub id: u64,
     pub user_id: u64,
-    pub connection_date: String,
+    pub connection_date: DateTime<Utc>,
     pub connection_count: i32,
 }
