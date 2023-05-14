@@ -1,10 +1,12 @@
 services:
-  mysql-stg:
+  mysql-dev:
     image: mysql:latest
+    build:
+      network: none
     ports: 
       - 127.0.0.1:3306:3306
     volumes:
-      - mysql_data_stg:/var/lib/mysql
+      - mysql_data_dev:/var/lib/mysql
     environment:
       MYSQL_ALLOW_EMPTY_PASSWORD: yes
       MYSQL_DATABASE: dt_dev
@@ -12,5 +14,5 @@ services:
       MYSQL_PASSWORD: dt_dev_pass
       
 volumes:
-  mysql_data_stg:
+  mysql_data_dev:
     driver: local
