@@ -14,7 +14,7 @@ To run Distraction Tracker, you will need the following:
 
 ## Getting Started
 
-To get started with Distraction Tracker running locally in development in Docker, follow these steps:
+To get started with Distraction Tracker running locally in staging in Docker, follow these steps:
 
 1. Clone the repository:
 
@@ -27,21 +27,19 @@ To get started with Distraction Tracker running locally in development in Docker
 		```
 		cargo build
 		```
-	2. Then run:
-	
+	2. Then run:	
 		```
-		docker compose -f dev.docker-compose.yml up -d
+		docker compose -f stg.docker-compose.yml up -d
 		```
 
 	   This will start a MySQL container and a web application container. The application will be accessible at `http://127.0.0.1:8080`.
 
 3. To stop the application, run:
-
    ```
-   docker compose -f dev.docker-compose.yml down
+   docker compose -f stg.docker-compose.yml down
    ```
 
-4. This is a development application. The web app is linked to the directory on the host filesystem where the source code is. When you make changes, simply run `cargo build` and rerun the docker commands.
+4. This is a staging application. The web app is linked to the directory on the host filesystem where the source code is. When you make changes, simply run `cargo build` and rerun the docker commands.
 
 ## Non-Docker
 
@@ -51,19 +49,21 @@ To get started with Distraction Tracker running locally in development in Docker
    git clone https://github.com/DGotshalk/distraction-tracker.git
    ```
 
-2. Install mysql or have an instance running locally or remotely, your choice
+2. Run a development mysql container
+	```
+	docker compose -f dev.docker-compose.yml up -d
+	```
 
-3. Create a `.env` file in the root directory of the repository, with the following contents:
+4. Create a `.env` file in the root directory of the repository, with the following contents:
 
-   ```
-   DATABASE_URL="mysql://user:pass@host:port/database"
-   ```
+	```
+	DATABASE_URL="mysql://dt-dev:dt_dev_pass@mysql-dev/dt_dev"
+	```
 
-4. Run the following
+5. Run the following
 	```
 	cargo run 
 	```
-
 ## Usage
 
 To use Distraction Tracker, open a web browser and navigate to `http://localhost:8080`. You will see the home page, which displays a list of distractions for the current day.
