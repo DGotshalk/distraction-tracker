@@ -10,15 +10,15 @@ use serde::{Deserialize, Serialize};
 
 #[derive(sqlx::FromRow, Serialize, Deserialize)]
 pub struct Users {
-    pub id: i32,
+    pub id: u64,
     pub ip_address: String,
     pub user_agent: String,
 }
 
 #[derive(sqlx::FromRow, Serialize, Deserialize)]
 pub struct UserConnections {
-    pub id: i32,
-    pub user_id: i32,
+    pub id: u64,
+    pub user_id: u64,
     pub connection_date: String,
     pub connection_count: i32,
 }

@@ -1,0 +1,64 @@
+{
+  "db": "MySQL",
+  "030737006ac3dbea8627502d86702bab66371f627260ffef0aad5df8606e23b7": {
+    "describe": {
+      "columns": [],
+      "nullable": [],
+      "parameters": {
+        "Right": 2
+      }
+    },
+    "query": "\n        INSERT INTO users (ip_address, user_agent) VALUES(?,?)\n        "
+  },
+  "51b451fdb029bf1f193fe8de89b971706414f0027be25b454863f822a5fe01b1": {
+    "describe": {
+      "columns": [
+        {
+          "name": "id",
+          "ordinal": 0,
+          "type_info": {
+            "char_set": 63,
+            "flags": {
+              "bits": 551
+            },
+            "max_size": 20,
+            "type": "LongLong"
+          }
+        },
+        {
+          "name": "ip_address",
+          "ordinal": 1,
+          "type_info": {
+            "char_set": 224,
+            "flags": {
+              "bits": 4105
+            },
+            "max_size": 180,
+            "type": "VarString"
+          }
+        },
+        {
+          "name": "user_agent",
+          "ordinal": 2,
+          "type_info": {
+            "char_set": 224,
+            "flags": {
+              "bits": 4097
+            },
+            "max_size": 1020,
+            "type": "VarString"
+          }
+        }
+      ],
+      "nullable": [
+        false,
+        false,
+        false
+      ],
+      "parameters": {
+        "Right": 2
+      }
+    },
+    "query": "\n        SELECT * FROM users \n        WHERE ip_address = ? AND user_agent = ?\n        "
+  }
+}

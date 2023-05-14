@@ -4,4 +4,5 @@
 // Distributed under terms of the MIT license.
 //
 
-use sqlx::{query, MySQLPool};
+use crate::models::{UserConnections, Users};
+use sqlx::MySqlPool;

@@ -4,21 +4,13 @@
 // Distributed under terms of the MIT license.
 //
 
-use crate::models;
-use sqlx::{query, MySQLPool};
+use crate::models::{UserConnections, Users};
+use sqlx::MySqlPool;
 
-//pub async fn increment(pool: &MySQLPool, user: &models::User) -> Result<(), Error> {
+//pub async fn increment(pool: &MySqlPool, user: &Users) -> sqlx::Result<()> {
+//    // should just return the an &models::Users with an id. that has been incremented
 //    //want to do:
-//    // query to see if user exists, if user does, then increment number,
-//    // if user doesn't, then don't increment.
-//    let result = sqlx::query_as!(models::User);
+//    //assume the user exists
+//    // using the id, add increment the connection of today
+//    Ok()
 //}
-//
-//async fn check_user(
-//    pool: &MySQLPool,
-//    user: &models::User,
-//) -> sqlx::Result<models::User, sqlx::Error> {
-//    let result = sqlx::query_as!(models::User);
-//    result
-//}
-//async fn check_connection(pool: &MySQLPool, user: &models::User) -> sqlx::Result<(), sqlx::Error> {}
