@@ -4,10 +4,10 @@
 // Distributed under terms of the MIT license.
 //
 
-use crate::models::{UserConnections, Users};
+use crate::models::Users;
 use sqlx::MySqlPool;
 
-async fn get_user(
+pub async fn get_user(
     pool: &MySqlPool,
     ip_address: String,
     user_agent: String,

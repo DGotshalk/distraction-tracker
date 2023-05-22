@@ -6,7 +6,7 @@
 
 //Still debatable if I will need this, I have plans for serializing as json, but don't necessarily
 //need to? Will have to check for efficiency in doing so :)
-use chrono::{DateTime, Utc};
+use chrono::NaiveDate;
 
 #[derive(sqlx::FromRow)]
 pub struct Users {
@@ -19,6 +19,6 @@ pub struct Users {
 pub struct UserConnections {
     pub id: u64,
     pub user_id: u64,
-    pub connection_date: DateTime<Utc>,
+    pub connection_date: NaiveDate,
     pub connection_count: i32,
 }
