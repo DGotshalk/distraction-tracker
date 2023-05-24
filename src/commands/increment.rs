@@ -6,16 +6,18 @@
 
 use crate::commands::{add_user_connection, get_user_connection};
 use crate::models::{UserConnections, Users};
-use chrono::{DateTime, NaiveDate, Utc};
+use chrono::NaiveDate;
 use sqlx::MySqlPool;
 
-pub async fn increment(pool: &MySqlPool, user: &Users) -> sqlx::Result<Option<UserConnections>> {
+pub async fn increment(
+    pool: &MySqlPool,
+    user: &Users,
+    today_naive: NaiveDate,
+) -> sqlx::Result<Option<UserConnections>> {
     // should just return the an &models::Users with an id. that has been incremented
     //want to do:
     //assume the user exists
     // using the id, add increment the connection of today
-    let today: DateTime<Utc> = Utc::now();
-    let today_naive = today.date_naive();
     let user_connection = get_user_connection(pool, user, today_naive).await?;
 
     // match to see if we have an existing user connection. if we do, just add it up by 1.
