@@ -10,9 +10,9 @@ use sqlx::MySqlPool;
 
 pub async fn add_user(
     pool: &MySqlPool,
-    user_agent: String,
     ip_address: String,
-) -> sqlx::Result<Option<Users>> {
+    user_agent: String,
+) -> sqlx::Result<Users> {
     //assume user does not exist create a new user, and increment connection by 1
     let _insert = sqlx::query!(
         r#"
@@ -25,7 +25,8 @@ pub async fn add_user(
     .execute(pool)
     .await?;
 
-    let user = get_user(pool, ip_address, user_agent).await?;
-
-    Ok(user)
+    let user_opt = get_user(pool, ip_address, user_agent)
+        .await?
+        .expect("Recently inserted user somehow does not exist");
+    Ok(user_opt)
 }

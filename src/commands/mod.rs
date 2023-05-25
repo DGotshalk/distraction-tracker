@@ -4,17 +4,15 @@
 // Distributed under terms of the MIT license.
 //
 pub mod add_user;
-pub mod daily;
 pub mod get_user;
 pub mod increment;
 pub mod weekly;
 
 pub async fn get_user_connection(
     pool: &sqlx::MySqlPool,
-    user: &crate::models::Users,
+    user_id: u64,
     today: chrono::NaiveDate,
 ) -> sqlx::Result<Option<crate::models::UserConnections>> {
-    let user_id: u64 = user.id;
     let user_connection = sqlx::query_as!(
         crate::models::UserConnections,
         r#"
@@ -31,10 +29,9 @@ pub async fn get_user_connection(
 
 pub async fn add_user_connection(
     pool: &sqlx::MySqlPool,
-    user: &crate::models::Users,
+    user_id: u64,
     today: chrono::NaiveDate,
-) -> sqlx::Result<sqlx::mysql::MySqlQueryResult> {
-    let user_id: u64 = user.id;
+) -> sqlx::Result<crate::models::UserConnections> {
     let added_connection = sqlx::query!(
         r#"
             INSERT INTO user_connections (user_id, connection_date, connection_count) 
@@ -45,5 +42,8 @@ pub async fn add_user_connection(
     )
     .execute(pool)
     .await?;
-    Ok(added_connection)
+    let user_connection_opt = get_user_connection(pool, user_id, today)
+        .await?
+        .expect("Recently added user connection does not exist");
+    Ok(user_connection_opt)
 }
