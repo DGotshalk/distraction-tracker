@@ -67,9 +67,8 @@ To get started with Distraction Tracker running locally in staging in Docker, fo
 ## Usage
 
 - **dev.docker-compose.yml**: used to run a local mysql instance that is required by sqlx when developing. the connection paramters for this container needs to match your .env file.
-- **stg.docker-compose.yml**:  used to test to see if the application will work properly while both the app and the database are conainerized.
+- **stg.docker-compose.yml**:  used to test to see if the application will work properly while both the app and the database are containerized.
 - **docker-compose.yml**: used to build the production application. If I push the image to docker hub, then I only need the docker file. 
-- 
 To use Distraction Tracker, open a web browser and navigate to `http://localhost:8080`. You will see the home page, which displays a list of distractions for the current day.
 
 ## License
