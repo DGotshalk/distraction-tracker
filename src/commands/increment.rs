@@ -27,7 +27,7 @@ pub async fn increment(
 }
 
 async fn add_1(pool: &MySqlPool, user_connect: &UserConnections) -> sqlx::Result<UserConnections> {
-    let add_1 = sqlx::query!(
+    let _add_1 = sqlx::query!(
         r#"
             UPDATE user_connections 
             SET connection_count = connection_count +1 

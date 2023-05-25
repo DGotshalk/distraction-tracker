@@ -65,7 +65,7 @@ pub async fn homepage(
 struct IndexTemplate {
     message: String,
     ip: String,
-    count: i32,
+    count: u32,
 }
 
 fn return_error_as_html<E: Error>(err: E) -> Response {

@@ -17,7 +17,7 @@ use sqlx::MySqlPool;
 
 struct DateCount {
     date: String,
-    count: i32,
+    count: u32,
 }
 
 pub async fn iphistory(

@@ -32,7 +32,7 @@ pub async fn add_user_connection(
     user_id: u64,
     today: chrono::NaiveDate,
 ) -> sqlx::Result<crate::models::UserConnections> {
-    let added_connection = sqlx::query!(
+    let _added_connection = sqlx::query!(
         r#"
             INSERT INTO user_connections (user_id, connection_date, connection_count) 
             VALUES(?, ?, 1)

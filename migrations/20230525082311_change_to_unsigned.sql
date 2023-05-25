@@ -1,0 +1,1 @@
+ALTER TABLE user_connections MODIFY COLUMN connection_count INTEGER UNSIGNED NOT NULL

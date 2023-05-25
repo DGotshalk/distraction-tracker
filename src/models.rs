@@ -20,5 +20,5 @@ pub struct UserConnections {
     pub id: u64,
     pub user_id: u64,
     pub connection_date: NaiveDate,
-    pub connection_count: i32,
+    pub connection_count: u32,
 }

@@ -45,9 +45,9 @@
           "type_info": {
             "char_set": 63,
             "flags": {
-              "bits": 4097
+              "bits": 4129
             },
-            "max_size": 11,
+            "max_size": 10,
             "type": "Long"
           }
         }
