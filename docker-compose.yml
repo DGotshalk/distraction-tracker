@@ -1,0 +1,23 @@
+services:
+  mysql-prod:
+    image: mysql:latest
+    restart: unless-stopped
+    volumes:
+      - mysql_data_prod:/var/lib/mysql
+    environment:
+      MYSQL_ALLOW_EMPTY_PASSWORD: yes
+      MYSQL_DATABASE: dt_prod
+      MYSQL_USER: dt-prod
+      MYSQL_PASSWORD: dt_prod_pass
+  dt-prod:
+    image: dgotshalk/distraction-tracker:latest
+    ports:
+      - 127.0.0.1:8080:8080
+    environment:
+      DATABASE_URL: mysql://dt-prod:dt_prod_pass@mysql-prod/dt_prod
+    init: true
+    tty: true
+    restart: unless-stopped
+      
+volumes:
+  mysql_data_prod:

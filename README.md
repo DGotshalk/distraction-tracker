@@ -39,7 +39,7 @@ To get started with Distraction Tracker running locally in staging in Docker, fo
    docker compose -f stg.docker-compose.yml down
    ```
 
-4. This is a staging application. The web app is linked to the directory on the host filesystem where the source code is. When you make changes, simply run `cargo build` and rerun the docker commands.
+4. This is a staging application. The web app will be built and ran like it would be in production. To rebuild it after changes, simply rerun the docker commands.
 
 ## Non-Docker
 
@@ -66,6 +66,10 @@ To get started with Distraction Tracker running locally in staging in Docker, fo
 	```
 ## Usage
 
+- **dev.docker-compose.yml**: used to run a local mysql instance that is required by sqlx when developing. the connection paramters for this container needs to match your .env file.
+- **stg.docker-compose.yml**:  used to test to see if the application will work properly while both the app and the database are conainerized.
+- **docker-compose.yml**: used to build the production application. If I push the image to docker hub, then I only need the docker file. 
+- 
 To use Distraction Tracker, open a web browser and navigate to `http://localhost:8080`. You will see the home page, which displays a list of distractions for the current day.
 
 ## License
