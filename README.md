@@ -31,8 +31,7 @@ To get started with Distraction Tracker running locally in staging in Docker, fo
 		```
 		docker compose -f stg.docker-compose.yml up -d
 		```
-
-	   This will start a MySQL container and a web application container. The application will be accessible at `http://127.0.0.1:8080`.
+	3. This will start a MySQL container and a web application container. The application will be accessible at `http://127.0.0.1:8080`.
 
 3. To stop the application, run:
    ```
