@@ -51,7 +51,6 @@ pub async fn homepage(
 
     let template = IndexTemplate {
         message: String::from("Don't be distracted!"),
-        ip: client_ip.clone(),
         count: connected_user.connection_count,
     };
     match template.render() {
@@ -64,7 +63,6 @@ pub async fn homepage(
 #[template(path = "index.html")]
 struct IndexTemplate {
     message: String,
-    ip: String,
     count: u32,
 }
 

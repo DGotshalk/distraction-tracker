@@ -14,12 +14,11 @@
 	</p>
 	<p>
 		<b>
-			{{ ip }} 
-		</b>
-	</p>
-	<p>
-		<b>
-			{{ count }} 
+			{% if count == 1 %}
+				You have visited: {{ count }} time today.
+			{% else %}
+				You have visited: {{ count }} times today.
+			{% endif %}
 		</b>
 	</p>
 	<p>
