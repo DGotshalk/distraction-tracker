@@ -4,8 +4,12 @@
 // Distributed under terms of the MIT license.
 //
 
-use crate::commands::{add_user::add_user, get_user::get_user, increment::increment};
-use crate::routes::check_if_ip;
+use crate::commands::{
+    user_connections::increment,
+    users::{add_user, get_user},
+};
+use crate::routes::headers::check_if_ip;
+
 use askama::Template;
 use axum::{
     headers::UserAgent,

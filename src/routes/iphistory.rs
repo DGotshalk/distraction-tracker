@@ -4,7 +4,7 @@
 // Distributed under terms of the MIT license.
 //
 
-use crate::routes::check_if_ip;
+use crate::routes::headers::check_if_ip;
 use askama::Template;
 use axum::{
     headers::UserAgent,

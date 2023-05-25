@@ -9,8 +9,8 @@ This version of Distraction Tracker uses a MySQL database to store data. It has 
 To run Distraction Tracker, you will need the following:
 
 - <a href="https://www.rust-lang.org/tools/install"> Rust </a> 
-- <a href="https://docs.docker.com/engine/install/"> Docker </a>(version 17.05 or higher)
-- <a href="https://docs.docker.com/compose/install/"> Docker Compose </a> (version 1.20 or higher)
+- <a href="https://docs.docker.com/engine/install/"> Docker </a>
+- <a href="https://docs.docker.com/compose/install/"> Docker Compose </a> 
 
 ## Getting Started
 
