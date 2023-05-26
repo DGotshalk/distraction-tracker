@@ -8,9 +8,9 @@ use chrono::NaiveDate;
 use sqlx::MySqlPool;
 
 pub async fn get_user_connection(
-    pool: &sqlx::MySqlPool,
+    pool: &MySqlPool,
     user_id: u64,
-    today: chrono::NaiveDate,
+    today: NaiveDate,
 ) -> sqlx::Result<Option<UserConnections>> {
     let user_connection = sqlx::query_as!(
         UserConnections,
@@ -27,9 +27,9 @@ pub async fn get_user_connection(
 }
 
 pub async fn add_user_connection(
-    pool: &sqlx::MySqlPool,
+    pool: &MySqlPool,
     user_id: u64,
-    today: chrono::NaiveDate,
+    today: NaiveDate,
 ) -> sqlx::Result<UserConnections> {
     let _added_connection = sqlx::query!(
         r#"
@@ -47,17 +47,23 @@ pub async fn add_user_connection(
     Ok(user_connection_opt)
 }
 
-pub async fn weekly(pool: &MySqlPool, user_id: u64) -> sqlx::Result<Vec<UserConnections>> {
+pub async fn weekly(
+    pool: &MySqlPool,
+    user_id: u64,
+    today: NaiveDate,
+) -> sqlx::Result<Vec<UserConnections>> {
     let past_7 = sqlx::query_as!(
         UserConnections,
         r#"
             SELECT *
             FROM user_connections
-            WHERE user_id = ?
+            WHERE user_id = ? AND connection_date BETWEEN ? - INTERVAL 7 DAY AND ?
             ORDER BY connection_date DESC
             LIMIT 7
         "#,
-        user_id
+        user_id,
+        today,
+        today
     )
     .fetch_all(pool)
     .await?;

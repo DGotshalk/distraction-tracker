@@ -9,14 +9,13 @@ use crate::commands::{
     users::{add_user, get_user},
 };
 use crate::models::UserConnections;
-use crate::routes::helpers::{check_if_ip, return_error_as_html};
+use crate::routes::helpers::{check_if_ip, get_hst_date, return_error_as_html};
 use askama::Template;
 use axum::{
     headers::UserAgent,
     response::{Html, IntoResponse},
     Extension, TypedHeader,
 };
-
 use axum_client_ip::LeftmostXForwardedFor;
 use sqlx::MySqlPool;
 
@@ -26,20 +25,21 @@ pub async fn iphistory(
     TypedHeader(user_agent): TypedHeader<UserAgent>,
 ) -> impl IntoResponse {
     let client_ip: String = check_if_ip(header_ip);
+    let today = get_hst_date();
     let prospective_user = get_user(&pool, client_ip.clone(), user_agent.to_string()).await;
     let accepted_user = match prospective_user {
         Ok(user) => user,
         Err(err) => return return_error_as_html(err),
     };
     let last_7_connections_res = match accepted_user {
-        Some(user) => weekly(&pool, user.id).await,
+        Some(user) => weekly(&pool, user.id, today).await,
         None => {
             let new_user = add_user(&pool, client_ip.clone(), user_agent.to_string()).await;
             let added_user = match new_user {
                 Ok(user) => user,
                 Err(err) => return return_error_as_html(err),
             };
-            weekly(&pool, added_user.id).await
+            weekly(&pool, added_user.id, today).await
         }
     };
 
@@ -49,7 +49,7 @@ pub async fn iphistory(
     };
 
     let template = HistoryTemplate {
-        message: String::from("The last 7 dates that you have connected"),
+        message: String::from("Your visits in the past week"),
         dates: &last_7_connections,
     };
 

@@ -64,70 +64,6 @@
     },
     "query": "\n        SELECT * FROM user_connections\n        WHERE user_id=? AND connection_date=?\n        "
   },
-  "33420c09308e78943562c1d6739623df28a8943d2daaa588caf9378f1fa7a683": {
-    "describe": {
-      "columns": [
-        {
-          "name": "id",
-          "ordinal": 0,
-          "type_info": {
-            "char_set": 63,
-            "flags": {
-              "bits": 551
-            },
-            "max_size": 20,
-            "type": "LongLong"
-          }
-        },
-        {
-          "name": "user_id",
-          "ordinal": 1,
-          "type_info": {
-            "char_set": 63,
-            "flags": {
-              "bits": 4137
-            },
-            "max_size": 20,
-            "type": "LongLong"
-          }
-        },
-        {
-          "name": "connection_date",
-          "ordinal": 2,
-          "type_info": {
-            "char_set": 63,
-            "flags": {
-              "bits": 4225
-            },
-            "max_size": 10,
-            "type": "Date"
-          }
-        },
-        {
-          "name": "connection_count",
-          "ordinal": 3,
-          "type_info": {
-            "char_set": 63,
-            "flags": {
-              "bits": 4129
-            },
-            "max_size": 10,
-            "type": "Long"
-          }
-        }
-      ],
-      "nullable": [
-        false,
-        false,
-        false,
-        false
-      ],
-      "parameters": {
-        "Right": 1
-      }
-    },
-    "query": "\n            SELECT *\n            FROM user_connections\n            WHERE user_id = ?\n            ORDER BY connection_date DESC\n            LIMIT 7\n        "
-  },
   "51b451fdb029bf1f193fe8de89b971706414f0027be25b454863f822a5fe01b1": {
     "describe": {
       "columns": [
@@ -188,6 +124,70 @@
       }
     },
     "query": "\n            INSERT INTO user_connections (user_id, connection_date, connection_count) \n            VALUES(?, ?, 1)\n            "
+  },
+  "e3fa5984d8587aaab95c7d5ff4436439b2c7d24e451208d611b70adfd58d5656": {
+    "describe": {
+      "columns": [
+        {
+          "name": "id",
+          "ordinal": 0,
+          "type_info": {
+            "char_set": 63,
+            "flags": {
+              "bits": 551
+            },
+            "max_size": 20,
+            "type": "LongLong"
+          }
+        },
+        {
+          "name": "user_id",
+          "ordinal": 1,
+          "type_info": {
+            "char_set": 63,
+            "flags": {
+              "bits": 4137
+            },
+            "max_size": 20,
+            "type": "LongLong"
+          }
+        },
+        {
+          "name": "connection_date",
+          "ordinal": 2,
+          "type_info": {
+            "char_set": 63,
+            "flags": {
+              "bits": 4225
+            },
+            "max_size": 10,
+            "type": "Date"
+          }
+        },
+        {
+          "name": "connection_count",
+          "ordinal": 3,
+          "type_info": {
+            "char_set": 63,
+            "flags": {
+              "bits": 4129
+            },
+            "max_size": 10,
+            "type": "Long"
+          }
+        }
+      ],
+      "nullable": [
+        false,
+        false,
+        false,
+        false
+      ],
+      "parameters": {
+        "Right": 3
+      }
+    },
+    "query": "\n            SELECT *\n            FROM user_connections\n            WHERE user_id = ? AND connection_date BETWEEN ? - INTERVAL 7 DAY AND ?\n            ORDER BY connection_date DESC\n            LIMIT 7\n        "
   },
   "ede19f2c5c1459e6adaf36e1a69d744d33c6f0acf716eb66410c1431c20a523d": {
     "describe": {
