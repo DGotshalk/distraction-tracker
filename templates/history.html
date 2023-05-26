@@ -14,23 +14,16 @@
 	</head>
 	<body>
 	<p>	
-	<h1>Message: {{ message }} </h1>	
-	</p>
-	<p>
-		<b>
-			IP: {{ ip }} 
-		</b>
-	</p>
-	<p>
-		<b>
-			Agent: {{ agent }} 
-		</b>
+	<h1>{{ message }} </h1>	
 	</p>
 	<ul>
 		{% for this in dates %}
-		<li> {{ this.date }} : {{ this.count }}
+		<li> {{ this.connection_date }} : {{ this.connection_count }}
 		{% endfor %}
 	</ul>
+	<p>
+		<img src="./images/quote.png">
+	</p>
 	</body>
 </html>
 

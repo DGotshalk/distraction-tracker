@@ -11,9 +11,9 @@ pub async fn get_user_connection(
     pool: &sqlx::MySqlPool,
     user_id: u64,
     today: chrono::NaiveDate,
-) -> sqlx::Result<Option<crate::models::UserConnections>> {
+) -> sqlx::Result<Option<UserConnections>> {
     let user_connection = sqlx::query_as!(
-        crate::models::UserConnections,
+        UserConnections,
         r#"
         SELECT * FROM user_connections
         WHERE user_id=? AND connection_date=?
@@ -30,7 +30,7 @@ pub async fn add_user_connection(
     pool: &sqlx::MySqlPool,
     user_id: u64,
     today: chrono::NaiveDate,
-) -> sqlx::Result<crate::models::UserConnections> {
+) -> sqlx::Result<UserConnections> {
     let _added_connection = sqlx::query!(
         r#"
             INSERT INTO user_connections (user_id, connection_date, connection_count) 
@@ -45,6 +45,23 @@ pub async fn add_user_connection(
         .await?
         .expect("Recently added user connection does not exist");
     Ok(user_connection_opt)
+}
+
+pub async fn weekly(pool: &MySqlPool, user_id: u64) -> sqlx::Result<Vec<UserConnections>> {
+    let past_7 = sqlx::query_as!(
+        UserConnections,
+        r#"
+            SELECT *
+            FROM user_connections
+            WHERE user_id = ?
+            ORDER BY connection_date DESC
+            LIMIT 7
+        "#,
+        user_id
+    )
+    .fetch_all(pool)
+    .await?;
+    Ok(past_7)
 }
 
 pub async fn increment(

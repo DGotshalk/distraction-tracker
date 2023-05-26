@@ -8,19 +8,16 @@ use crate::commands::{
     user_connections::increment,
     users::{add_user, get_user},
 };
-use crate::routes::headers::check_if_ip;
+use crate::routes::helpers::{check_if_ip, get_hst_date, return_error_as_html};
 
 use askama::Template;
 use axum::{
     headers::UserAgent,
-    http::StatusCode,
-    response::{Html, IntoResponse, Response},
+    response::{Html, IntoResponse},
     Extension, TypedHeader,
 };
 use axum_client_ip::LeftmostXForwardedFor;
-use chrono::{DateTime, Utc};
 use sqlx::MySqlPool;
-use std::error::Error;
 
 pub async fn homepage(
     Extension(pool): Extension<MySqlPool>,
@@ -28,9 +25,7 @@ pub async fn homepage(
     TypedHeader(user_agent): TypedHeader<UserAgent>,
 ) -> impl IntoResponse {
     let client_ip: String = check_if_ip(header_ip);
-    let today: DateTime<Utc> = Utc::now();
-    let today_naive = today.date_naive();
-
+    let today_naive = get_hst_date();
     let prospective_user = get_user(&pool, client_ip.clone(), user_agent.to_string()).await;
     let accepted_user = match prospective_user {
         Ok(user) => user,
@@ -68,12 +63,4 @@ pub async fn homepage(
 struct IndexTemplate {
     message: String,
     count: u32,
-}
-
-fn return_error_as_html<E: Error>(err: E) -> Response {
-    (
-        StatusCode::INTERNAL_SERVER_ERROR,
-        format!("Failed to render template. Error {}", err),
-    )
-        .into_response()
 }
