@@ -9,7 +9,6 @@ services:
       MYSQL_USER: dt-stg
       MYSQL_PASSWORD: dt_stg_pass
   dt-stg:
-    image: distraction-tracker:staging
     build:
       context: .
     ports:
