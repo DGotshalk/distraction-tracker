@@ -1,5 +1,5 @@
 **
-
+!sqlx-data.json
 !src/**
 !Cargo.toml
 !Cargo.lock

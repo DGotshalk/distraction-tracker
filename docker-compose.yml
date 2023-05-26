@@ -1,7 +1,6 @@
 services:
   mysql-prod:
     image: mysql:latest
-    restart: unless-stopped
     volumes:
       - mysql_data_prod:/var/lib/mysql
     environment:
@@ -9,6 +8,7 @@ services:
       MYSQL_DATABASE: dt_prod
       MYSQL_USER: dt-prod
       MYSQL_PASSWORD: dt_prod_pass
+    restart: unless-stopped
   dt-prod:
     image: dgotshalk/distraction-tracker:latest
     ports:
