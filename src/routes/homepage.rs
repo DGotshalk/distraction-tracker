@@ -16,15 +16,23 @@ use axum::{
     response::{Html, IntoResponse},
     Extension, TypedHeader,
 };
-use axum_client_ip::LeftmostXForwardedFor;
+use axum_client_ip::{SecureClientIp, XForwardedFor};
 use sqlx::MySqlPool;
 
 pub async fn homepage(
     Extension(pool): Extension<MySqlPool>,
-    LeftmostXForwardedFor(header_ip): LeftmostXForwardedFor,
+    XForwardedFor(header_ip_x): XForwardedFor,
+    SecureClientIp(header_ip): SecureClientIp,
     TypedHeader(user_agent): TypedHeader<UserAgent>,
 ) -> impl IntoResponse {
-    let client_ip: String = check_if_ip(header_ip);
+    // a bit brute force, but if we have XForwardedFor headers, then we check them, if we don't we
+    // have to trust the ConnectInfo. I wish I could get this automatically in 1 variable, but I
+    // the axum_client_ip docs didn't seem to have how to do that :/
+    let client_ip: String = if header_ip_x.is_empty() {
+        check_if_ip(header_ip)
+    } else {
+        check_if_ip(header_ip_x[0])
+    };
     let today_naive = get_hst_date();
     let prospective_user = get_user(&pool, client_ip.clone(), user_agent.to_string()).await;
     let accepted_user = match prospective_user {

@@ -16,15 +16,20 @@ use axum::{
     response::{Html, IntoResponse},
     Extension, TypedHeader,
 };
-use axum_client_ip::LeftmostXForwardedFor;
+use axum_client_ip::{SecureClientIp, XForwardedFor};
 use sqlx::MySqlPool;
 
 pub async fn iphistory(
     Extension(pool): Extension<MySqlPool>,
-    LeftmostXForwardedFor(header_ip): LeftmostXForwardedFor,
+    XForwardedFor(header_ip_x): XForwardedFor,
+    SecureClientIp(header_ip): SecureClientIp,
     TypedHeader(user_agent): TypedHeader<UserAgent>,
 ) -> impl IntoResponse {
-    let client_ip: String = check_if_ip(header_ip);
+    let client_ip: String = if header_ip_x.is_empty() {
+        check_if_ip(header_ip)
+    } else {
+        check_if_ip(header_ip_x[0])
+    };
     let today = get_hst_date();
     let prospective_user = get_user(&pool, client_ip.clone(), user_agent.to_string()).await;
     let accepted_user = match prospective_user {
