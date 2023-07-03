@@ -30,12 +30,14 @@ pub async fn iphistory(
     } else {
         check_if_ip(header_ip_x[0])
     };
+
     let today = get_hst_date();
     let prospective_user = get_user(&pool, client_ip.clone(), user_agent.to_string()).await;
     let accepted_user = match prospective_user {
         Ok(user) => user,
         Err(err) => return return_error_as_html(err),
     };
+
     let last_7_connections_res = match accepted_user {
         Some(user) => weekly(&pool, user.id, today).await,
         None => {
