@@ -43,20 +43,23 @@ mod tests {
     use ::axum_test::TestServer;
     use axum::{
         body::Body,
-        //extract::connect_info::MockConnectInfo,
+        extract::connect_info::IntoMakeServiceWithConnectInfo,
         http::{Request, StatusCode},
     };
     //use tower::Service;
     //use tower::ServiceExt;
 
-    async fn app_mock_connect() -> Router {
-        app_with_mysql().await
+    async fn app_mock_connect() -> IntoMakeServiceWithConnectInfo<axum::Router, std::net::SocketAddr>
+    {
+        app_with_mysql()
+            .await
+            .into_make_service_with_connect_info::<std::net::SocketAddr>()
         // This isn't working
         // I should be able to use this instead of doing into_make_service_with_connect_info
         //.layer(MockConnectInfo(std::net::SocketAddr::from((
         //    [127, 0, 0, 1],
         //    3000,
-        //))))
+        //)))).into_make_service()
     }
 
     #[tokio::test]
@@ -64,9 +67,7 @@ mod tests {
         let listener =
             std::net::TcpListener::bind("127.0.0.1:9090".parse::<std::net::SocketAddr>().unwrap())
                 .unwrap();
-        let app = app_with_mysql()
-            .await
-            .into_make_service_with_connect_info::<std::net::SocketAddr>();
+        let app = app_mock_connect().await;
 
         tokio::spawn(async move {
             axum::Server::from_tcp(listener)
@@ -92,12 +93,8 @@ mod tests {
 
     #[tokio::test]
     async fn test_index_route() {
-        let app = app_mock_connect()
-            .await
-            .into_make_service_with_connect_info::<std::net::SocketAddr>();
-        let test_app = TestServer::new(app).unwrap();
+        let test_app = TestServer::new(app_mock_connect().await).unwrap();
 
-        println!("Starting Index Test");
         let response_index = test_app
             .get("/")
             .add_header(
@@ -105,18 +102,13 @@ mod tests {
                 hyper::http::HeaderValue::from_static("custom"),
             )
             .await;
-        format!("{response_index:#?}");
         assert_eq!(response_index.status_code(), StatusCode::OK);
     }
 
     #[tokio::test]
     async fn test_history_route() {
-        let app = app_mock_connect()
-            .await
-            .into_make_service_with_connect_info::<std::net::SocketAddr>();
-        let test_app = TestServer::new(app).unwrap();
+        let test_app = TestServer::new(app_mock_connect().await).unwrap();
 
-        println!("Starting History Test");
         let response_history = test_app
             .get("/history")
             .add_header(
@@ -124,18 +116,13 @@ mod tests {
                 hyper::http::HeaderValue::from_static("custom"),
             )
             .await;
-        format!("{:?}", response_history);
         assert_eq!(response_history.status_code(), StatusCode::OK);
     }
 
     #[tokio::test]
     async fn test_asset_route() {
-        let app = app_mock_connect()
-            .await
-            .into_make_service_with_connect_info::<std::net::SocketAddr>();
-        let test_app = TestServer::new(app).unwrap();
+        let test_app = TestServer::new(app_mock_connect().await).unwrap();
 
-        println!("Starting Asset Test");
         let response_asset = test_app
             .get("/images/quote.png")
             .add_header(
@@ -143,7 +130,6 @@ mod tests {
                 hyper::http::HeaderValue::from_static("custom"),
             )
             .await;
-        format!("{:?}", response_asset);
         assert_eq!(response_asset.status_code(), StatusCode::OK);
     }
 }
