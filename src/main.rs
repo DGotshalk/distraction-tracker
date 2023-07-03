@@ -6,7 +6,6 @@ use crate::db::connect_to_db;
 use crate::routes::{homepage::homepage, iphistory::iphistory};
 use axum::{routing::get, Extension, Router};
 use axum_client_ip::SecureClientIpSource;
-use sqlx::MySqlPool;
 use std::env;
 use tower_http::services::ServeDir;
 
@@ -17,17 +16,19 @@ mod routes;
 
 #[tokio::main]
 async fn main() {
+    let app = app_with_mysql()
+        .await
+        .into_make_service_with_connect_info::<std::net::SocketAddr>();
+    let addr = std::net::SocketAddr::from(([0, 0, 0, 0], 8080));
+
+    axum::Server::bind(&addr).serve(app).await.unwrap();
+}
+
+async fn app_with_mysql() -> Router {
     dotenv::dotenv().ok();
     let pool =
         connect_to_db(&env::var("DATABASE_URL").expect("Expected DATABASE_URL in environment"))
             .await;
-
-    let app = app(pool).into_make_service_with_connect_info::<std::net::SocketAddr>();
-    let addr = std::net::SocketAddr::from(([0, 0, 0, 0], 8080));
-    axum::Server::bind(&addr).serve(app).await.unwrap();
-}
-
-fn app(pool: MySqlPool) -> Router {
     Router::new()
         .route("/", get(homepage))
         .route("/history", get(iphistory))
@@ -39,20 +40,33 @@ fn app(pool: MySqlPool) -> Router {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::db::connect_to_db;
-    use axum::http::{Request, StatusCode};
-    use std::env; //
+    use ::axum_test::TestServer;
+    use axum::{
+        body::Body,
+        //extract::connect_info::MockConnectInfo,
+        http::{Request, StatusCode},
+    };
+    //use tower::Service;
+    //use tower::ServiceExt;
+
+    async fn app_mock_connect() -> Router {
+        app_with_mysql().await
+        // This isn't working
+        // I should be able to use this instead of doing into_make_service_with_connect_info
+        //.layer(MockConnectInfo(std::net::SocketAddr::from((
+        //    [127, 0, 0, 1],
+        //    3000,
+        //))))
+    }
 
     #[tokio::test]
-    async fn test_routes() {
-        dotenv::dotenv().ok();
-        let pool =
-            connect_to_db(&env::var("DATABASE_URL").expect("Expected DATABASE_URL in environment"))
-                .await;
+    async fn run_app() {
         let listener =
             std::net::TcpListener::bind("127.0.0.1:9090".parse::<std::net::SocketAddr>().unwrap())
                 .unwrap();
-        let app = app(pool).into_make_service_with_connect_info::<std::net::SocketAddr>();
+        let app = app_with_mysql()
+            .await
+            .into_make_service_with_connect_info::<std::net::SocketAddr>();
 
         tokio::spawn(async move {
             axum::Server::from_tcp(listener)
@@ -67,34 +81,69 @@ mod tests {
             .request(
                 Request::builder()
                     .uri("http://127.0.0.1:9090/")
-                    .body(hyper::Body::empty())
+                    .header("User-Agent", "custom")
+                    .body(Body::empty())
                     .unwrap(),
             )
             .await
             .unwrap();
-        println!("{}", response_index.body());
         assert_eq!(response_index.status(), StatusCode::OK);
+    }
 
-        let response_history = client
-            .request(
-                Request::builder()
-                    .uri("http://127.0.0.1:9090/history")
-                    .body(hyper::Body::empty())
-                    .unwrap(),
-            )
+    #[tokio::test]
+    async fn test_index_route() {
+        let app = app_mock_connect()
             .await
-            .unwrap();
-        assert_eq!(response_history.status(), StatusCode::OK);
+            .into_make_service_with_connect_info::<std::net::SocketAddr>();
+        let test_app = TestServer::new(app).unwrap();
 
-        let response_image = client
-            .request(
-                Request::builder()
-                    .uri("http://127.0.0.1:9090/images/Quote.png")
-                    .body(hyper::Body::empty())
-                    .unwrap(),
+        println!("Starting Index Test");
+        let response_index = test_app
+            .get("/")
+            .add_header(
+                hyper::http::HeaderName::from_static("user-agent"),
+                hyper::http::HeaderValue::from_static("custom"),
             )
+            .await;
+        format!("{response_index:#?}");
+        assert_eq!(response_index.status_code(), StatusCode::OK);
+    }
+
+    #[tokio::test]
+    async fn test_history_route() {
+        let app = app_mock_connect()
             .await
-            .unwrap();
-        assert_eq!(response_image.status(), StatusCode::OK);
+            .into_make_service_with_connect_info::<std::net::SocketAddr>();
+        let test_app = TestServer::new(app).unwrap();
+
+        println!("Starting History Test");
+        let response_history = test_app
+            .get("/history")
+            .add_header(
+                hyper::http::HeaderName::from_static("user-agent"),
+                hyper::http::HeaderValue::from_static("custom"),
+            )
+            .await;
+        format!("{:?}", response_history);
+        assert_eq!(response_history.status_code(), StatusCode::OK);
+    }
+
+    #[tokio::test]
+    async fn test_asset_route() {
+        let app = app_mock_connect()
+            .await
+            .into_make_service_with_connect_info::<std::net::SocketAddr>();
+        let test_app = TestServer::new(app).unwrap();
+
+        println!("Starting Asset Test");
+        let response_asset = test_app
+            .get("/images/quote.png")
+            .add_header(
+                hyper::http::HeaderName::from_static("user-agent"),
+                hyper::http::HeaderValue::from_static("custom"),
+            )
+            .await;
+        format!("{:?}", response_asset);
+        assert_eq!(response_asset.status_code(), StatusCode::OK);
     }
 }
