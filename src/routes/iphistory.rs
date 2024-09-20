@@ -12,11 +12,12 @@ use crate::models::UserConnections;
 use crate::routes::helpers::{check_if_ip, get_hst_date, return_error_as_html};
 use askama::Template;
 use axum::{
-    headers::UserAgent,
     response::{Html, IntoResponse},
-    Extension, TypedHeader,
+    Extension,
 };
 use axum_client_ip::{SecureClientIp, XForwardedFor};
+use axum_extra::TypedHeader;
+use headers::UserAgent;
 use sqlx::MySqlPool;
 
 pub async fn iphistory(

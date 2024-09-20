@@ -4,7 +4,7 @@ services:
     volumes:
       - mysql_data_prod:/var/lib/mysql
     environment:
-      MYSQL_ALLOW_EMPTY_PASSWORD: yes
+      MYSQL_ALLOW_EMPTY_PASSWORD: 1
       MYSQL_DATABASE: dt_prod
       MYSQL_USER: dt-prod
       MYSQL_PASSWORD: dt_prod_pass
@@ -18,6 +18,6 @@ services:
     init: true
     tty: true
     restart: unless-stopped
-      
+
 volumes:
   mysql_data_prod:

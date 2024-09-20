@@ -1,0 +1,12 @@
+{
+  "db_name": "MySQL",
+  "query": "\n            UPDATE user_connections \n            SET connection_count = connection_count +1 \n            WHERE user_id = ? AND connection_date = ?\n            ",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Right": 2
+    },
+    "nullable": []
+  },
+  "hash": "fe02e16c894d11ca68024136373395cf3fad90b63d10955c6ecbca5fb6f60ee9"
+}

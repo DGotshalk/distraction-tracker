@@ -21,7 +21,7 @@ async fn main() {
         .into_make_service_with_connect_info::<std::net::SocketAddr>();
     let addr = std::net::SocketAddr::from(([0, 0, 0, 0], 8080));
 
-    axum::Server::bind(&addr).serve(app).await.unwrap();
+    axum_server::Server::bind(addr).serve(app).await.unwrap();
 }
 
 async fn app_with_mysql() -> Router {
@@ -70,7 +70,7 @@ mod tests {
         let app = app_mock_connect().await;
 
         tokio::spawn(async move {
-            axum::Server::from_tcp(listener)
+            axum_server::Server::from_tcp(listener)
                 .unwrap()
                 .serve(app)
                 .await
